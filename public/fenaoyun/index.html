@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6efe4" />
+    <meta name="description" content="Room Decorator — 家具を置いて、動かして、自分だけの部屋を作る模様替えゲーム / Room Decorator, a cosy room-decorating game" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- link previews (X, LINE, Discord…). Crawlers want absolute image URLs: see README "公開するとき" -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Room Decorator" />
+    <meta property="og:title" content="Room Decorator" />
+    <meta property="og:description" content="家具を置いて、動かして、自分だけの部屋を作る模様替えゲーム / A cosy room-decorating game" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="./og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Room Decoratorのロゴと、家具が並んだワンルームの部屋" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Room Decorator" />
+    <meta name="twitter:description" content="家具を置いて、動かして、自分だけの部屋を作る模様替えゲーム / A cosy room-decorating game" />
+    <meta name="twitter:image" content="./og-image.png" />
+    <title>Room Decorator</title>
+    <style>html,body{background:#f6efe4;height:100%;margin:0}</style>
+    <script type="module" crossorigin src="./assets/index-CNmlUUbE.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-C4aeVvvW.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-basic-C-OQYkYR.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-oshi-BC8-lr0f.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-botanical-BUGUCov0.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-collector-CwMWKz5J.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-gaming-CYyvP6Xv.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-hotel-BBbUiaBY.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-japanese-CM8Os4-R.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-korean-z09ZHpTq.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-minimal-teq07bl-.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-nordic-CWUUTYTo.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-pet-CoQSxpyf.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-restaurant-D7fiyTV2.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-shop-B3WsZm1V.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-streamer-yiSrCVEt.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-collectibles-B6qhkqoV.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-western-CblD4FHg.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-westernGothic-CuvA8OjH.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-playroom-HQMyUTX8.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-sports-B5QZHpOJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-garage-Cq5EgzKJ.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-hobbyCollectibles-CBVdYn96.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-koreanExpansion-DxUnCLEF.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-sportsExpansion-DXGBU0Lw.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-music-B20Q3_3z.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-playroomExpansion-BYFdiixm.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-garageExpansion-BEXSQhUZ.js">
+    <link rel="modulepreload" crossorigin href="./assets/builders-tasteExpansion-BLl10WF_.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-Bm68a_63.css">
+  <script>
+(function(){
+var KEY='ga-optout',optedOut=false;
+try{
+var noga=new URLSearchParams(location.search).get('noga');
+if(noga==='1')localStorage.setItem(KEY,'1');
+if(noga==='0')localStorage.removeItem(KEY);
+optedOut=localStorage.getItem(KEY)==='1';
+}catch(error){optedOut=false}
+window['ga-disable-G-NEL3SQXJLC']=optedOut;
+if(optedOut)return;
+var src='direct';
+try{var s=localStorage.getItem('portfolio_src');if(s)src=s}catch(error){src='direct'}
+/**
+ * 計測用のセッションID (sid)。
+ *
+ * GA4 が自動収集する ga_session_id は**予約パラメータ**で、カスタムディメンションとして
+ * 登録できない（登録すると "reserved parameter_name" で拒否される）。そのため
+ * 同じ考え方 — 30 分の無操作で新しいセッションに切り替わる — を自前で持つ。
+ * GA4 へ送るときのパラメータ名は visit_id。sid も同じ理由で予約されていて使えない。
+ *
+ * これを gtag('config') に渡すと page_view や user_engagement など gtag が自動送信する
+ * イベントにも visit_id が付き、滞在時間をセッション単位に分解できる。
+ * ダッシュボードはこれを 1 標本として中央値を出す（平均は放置タブ 1 件で桁が変わるため）。
+ *
+ * 紹介ページ (BaseLayout.astro) とゲーム本体 (astro.config.mjs の注入) の両方から
+ * インライン展開して使う。両者で値がずれると同じ訪問が別セッションに割れるので、
+ * 定義はこの 1 ファイルに置いて共有する。ゲーム本体は同一オリジンに配信されるため、
+ * localStorage 越しに紹介ページと同じ sid を見られる。
+ *
+ * モジュールではなく素のスクリプトとして展開されるので、import / export は使えない。
+ */
+;(function () {
+  var OPTOUT_KEY = 'ga-optout'
+  var KEY = 'portfolio_sid'
+  // GA4 の既定のセッションタイムアウトに合わせる
+  var TTL_MS = 30 * 60 * 1000
+
+  window.__ggSid = ''
+
+  try {
+    // 計測から外した端末には何も書かない。?noga の反映そのものは計測タグ側が行うが、
+    // このスクリプトは gtag('config') より前に走る必要があるため、クエリも自分で見る
+    var noga = new URLSearchParams(location.search).get('noga')
+    if (noga === '1') return
+    if (noga !== '0' && localStorage.getItem(OPTOUT_KEY) === '1') return
+
+    var now = Date.now()
+
+    // 保存値が壊れていても新しいセッションとして始められるようにする。
+    // ここを外側の catch に任せると、一度壊れた値が残った端末では以後ずっと
+    // sid が空になり、そのブラウザだけ中央値の標本から抜け落ちてしまう
+    var saved = null
+    try {
+      saved = JSON.parse(localStorage.getItem(KEY) || 'null')
+    } catch (error) {
+      saved = null
+    }
+
+    var alive = saved && saved.id && typeof saved.at === 'number' && now - saved.at < TTL_MS
+    var id = alive ? saved.id : now.toString(36) + '.' + Math.random().toString(36).slice(2, 10)
+
+    // 最終アクティビティを更新して、遷移のたびにタイムアウトを延ばす
+    localStorage.setItem(KEY, JSON.stringify({ id: id, at: now }))
+    window.__ggSid = id
+  } catch (error) {
+    // プライベートモードなどで localStorage が使えない場合はセッションを識別しない。
+    // sid の付かないイベントは中央値の標本から外れるだけで、他の集計には影響しない
+    window.__ggSid = ''
+  }
+})()
+
+window.dataLayer=window.dataLayer||[];
+window.gtag=function(){window.dataLayer.push(arguments)};
+window.gtag('js',new Date());
+var config={slug:'room-decorator',src:src};
+if(window.__ggSid)config.visit_id=window.__ggSid;
+window.gtag('config','G-NEL3SQXJLC',config);
+var tag=document.createElement('script');tag.async=true;
+tag.src='https://www.googletagmanager.com/gtag/js?id=G-NEL3SQXJLC';
+document.head.appendChild(tag);
+})();
+</script>
+<script>
+window.__GG_SLUG__='room-decorator';
+/**
+ * 埋め込みゲーム共通のテレメトリ。
+ *
+ * astro.config.mjs の inject-game-analytics が、ビルド後の
+ * dist/games/<slug>/index.html にこのファイルの中身をそのまま <script> で埋め込む。
+ * バンドラを通らないので **素の JS で書くこと**（import / TypeScript は使えない）。
+ *
+ * 狙いは「どのゲームも同じ物差しで比較できること」。ゲームごとに独自のイベントを
+ * 送ると、プロトタイプが増えるほど横に並べられなくなる。送るイベントは 4 つに固定する。
+ *
+ *   game_start    { run_no }                 ラン開始（読み込み時に自動送信）
+ *   game_progress { run_no, pct }            進捗の節目（ゲームが呼ぶ）
+ *   game_end      { run_no, result, duration_sec }  ラン終了
+ *   game_replay   { run_no }                 「もう一度」で始まったランの目印
+ *
+ * このうち game_start と game_end(result=quit) はゲーム側の実装なしで自動的に出る。
+ * つまり組み込み作業ゼロでも「起動できたか」「何秒遊ばれたか」「何回目のプレイか」は
+ * 全ゲームで揃う。clear / gameover / 進捗 / リプレイだけがゲーム側の実装を要する。
+ *
+ * slug と src は gtag('config') で全イベントに付くため、ここでは送らない。
+ */
+;(function () {
+  if (typeof window === 'undefined') return
+  // 計測オプトアウト時 (?noga=1) は先行スニペットが gtag を定義せずに抜ける。
+  // そのブラウザではテレメトリも丸ごと無効になる
+  if (typeof window.gtag !== 'function') return
+
+  /** localStorage に通算プレイ回数を持つときのキー接頭辞 */
+  var RUN_KEY_PREFIX = 'gg-run:'
+  /** 放置されたタブが異常な長さの滞在として記録されるのを防ぐ上限 */
+  var MAX_DURATION_SEC = 3600
+  /** 1 ランあたりに送る進捗イベントの上限。ゲーム側の呼び過ぎで GA4 を溢れさせない */
+  var MAX_MILESTONES = 20
+  /** result に許す値。想定外の値は quit に寄せて集計を壊さない */
+  var RESULTS = ['clear', 'gameover', 'quit']
+
+  var slug = typeof window.__GG_SLUG__ === 'string' ? window.__GG_SLUG__ : ''
+
+  /**
+   * ラン 1 回分の状態。
+   * playedMs は「画面が見えていた時間」だけを積む。裏に回した時間をプレイ時間に
+   * 数えると、放置しただけのユーザーが熱心に遊んだように見えてしまう。
+   */
+  var state = {
+    runNo: 0,
+    playedMs: 0,
+    // 現在計測中の可視区間の開始時刻。不可視のあいだは null
+    segmentStart: null,
+    ended: true,
+    // 送信済みの進捗マイルストーン
+    reached: [],
+  }
+
+  var now = function () {
+    return typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()
+  }
+
+  var isVisible = function () {
+    return typeof document === 'undefined' || document.visibilityState !== 'hidden'
+  }
+
+  /** 通算プレイ回数を 1 進めて返す。localStorage が使えない環境では 0（＝不明） */
+  var nextRunNo = function () {
+    try {
+      var key = RUN_KEY_PREFIX + slug
+      var next = (parseInt(window.localStorage.getItem(key), 10) || 0) + 1
+      window.localStorage.setItem(key, String(next))
+      return next
+    } catch (error) {
+      return 0
+    }
+  }
+
+  var playedSec = function () {
+    var pending = state.segmentStart === null ? 0 : now() - state.segmentStart
+    return Math.min(Math.round((state.playedMs + pending) / 1000), MAX_DURATION_SEC)
+  }
+
+  var send = function (event, params) {
+    try {
+      window.gtag('event', event, params)
+    } catch (error) {
+      // 計測の失敗でゲームを止めない
+    }
+  }
+
+  var endRun = function (result) {
+    if (state.ended) return
+    var duration = playedSec()
+    var runNo = state.runNo
+    state = { ...state, ended: true, segmentStart: null }
+    send('game_end', { run_no: runNo, result: result, duration_sec: duration })
+  }
+
+  var beginRun = function () {
+    var runNo = nextRunNo()
+    state = {
+      runNo: runNo,
+      playedMs: 0,
+      segmentStart: isVisible() ? now() : null,
+      ended: false,
+      reached: [],
+    }
+    send('game_start', { run_no: runNo })
+  }
+
+  var normalizeResult = function (value) {
+    return RESULTS.indexOf(value) === -1 ? 'quit' : value
+  }
+
+  /* ---- 可視状態の追跡 ---- */
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', function () {
+      if (state.ended) return
+      if (isVisible()) {
+        if (state.segmentStart === null) state = { ...state, segmentStart: now() }
+        return
+      }
+      if (state.segmentStart === null) return
+      state = {
+        ...state,
+        playedMs: state.playedMs + (now() - state.segmentStart),
+        segmentStart: null,
+      }
+    })
+  }
+
+  // 終了が報告されないまま離脱したランは quit として閉じる。
+  // これがないと「途中でやめた」が観測できず、完走率の分母が欠ける。
+  // gtag.js の読み込み前に離脱した場合はキューごと失われるが、そこは許容する
+  window.addEventListener('pagehide', function () {
+    endRun('quit')
+  })
+
+  /* ---- ゲームから呼ぶ API ---- */
+  window.gg = {
+    /**
+     * 新しいランを開始する。前のランが終わっていなければ quit として閉じる。
+     * 読み込み時に自動で 1 回呼ばれるので、タイトル画面のあるゲームで
+     * 「実際に開始した瞬間」を測りたいときだけ明示的に呼べばよい。
+     */
+    start: function () {
+      endRun('quit')
+      beginRun()
+    },
+
+    /**
+     * 進捗の節目。0〜100 の整数に丸め、同じ値は 1 ラン 1 回しか送らない。
+     * 連続値ではなく 25 / 50 / 75 のような節目だけ呼ぶこと。
+     */
+    progress: function (pct) {
+      if (state.ended) return
+      var value = Math.round(Number(pct))
+      if (!isFinite(value)) return
+      value = Math.max(0, Math.min(100, value))
+      if (state.reached.indexOf(value) !== -1) return
+      if (state.reached.length >= MAX_MILESTONES) return
+      state = { ...state, reached: state.reached.concat(value) }
+      send('game_progress', { run_no: state.runNo, pct: value })
+    },
+
+    /** ランの終了。result は clear / gameover のいずれか（それ以外は quit 扱い） */
+    end: function (result) {
+      endRun(normalizeResult(result))
+    },
+
+    /**
+     * 「もう一度」で始まったラン。start() と同じくランを開始したうえで、
+     * 自発的な再挑戦であることを示す game_replay を追加で送る。
+     * リプレイ率 = game_replay / game_start が「面白さ」の代理指標になる。
+     */
+    replay: function () {
+      endRun('quit')
+      beginRun()
+      send('game_replay', { run_no: state.runNo })
+    },
+  }
+
+  beginRun()
+})()
+
+</script>
+</head>
+  <body>
+    <div id="app">
+      <canvas id="stage"></canvas>
+      <div id="ui"></div>
+    </div>
+    <noscript>JavaScript を有効にしてください / Please enable JavaScript to play.</noscript>
+  </body>
+</html>
