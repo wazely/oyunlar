@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oyunlar</title>
+<link rel="icon" href="https://i.hizliresim.com/4ww515zr.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Space+Grotesk:wght@500;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff0f7;
+    --bg-2: #ffd9ea;
+    --card: #ffffff;
+    --text: #4a1230;
+    --muted: #a0577d;
+    --line: #f7c2da;
+    --accent: #ec4899;
+    --accent-2: #db2777;
+    --shadow: 0 6px 20px rgba(219, 39, 119, .12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    min-height: 100vh;
+    font-family: "Nunito", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Arka plan: yumuşak süzülen pembe lekeler + hafif nokta deseni */
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .bg::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(236, 72, 153, .13) 1.2px, transparent 1.2px);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 70%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 70%);
+  }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .7; animation: float 16s ease-in-out infinite; }
+  .b1 { width: 420px; height: 420px; background: #ffc2de; top: -120px; left: -100px; }
+  .b2 { width: 360px; height: 360px; background: #ffd6e8; top: 25%; right: -120px; animation-delay: -5s; }
+  .b3 { width: 380px; height: 380px; background: #ffb3d6; bottom: -140px; left: 30%; animation-delay: -9s; opacity: .5; }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, 24px) scale(1.08); }
+  }
+
+
+  /* Ekstra arka plan efektleri */
+  .aurora {
+    position: absolute; inset: -50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(255,140,195,.28) 15%, transparent 35%, rgba(255,105,180,.22) 55%, transparent 75%, rgba(255,170,210,.25) 90%, transparent 100%);
+    filter: blur(70px);
+    animation: spin 45s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .glow {
+    position: absolute; left: 50%; top: 30%;
+    width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(236,72,153,.22), transparent 65%);
+    transform: translate(-50%, -50%);
+    transition: left .25s ease-out, top .25s ease-out;
+  }
+  .p {
+    position: absolute; bottom: -40px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(236,72,153,.35));
+    border: 1px solid rgba(236,72,153,.25);
+    opacity: 0;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translate(0, 0); opacity: 0; }
+    10% { opacity: .85; }
+    50% { transform: translate(var(--sway), -55vh); }
+    90% { opacity: .7; }
+    100% { transform: translate(calc(var(--sway) * -1), -112vh); opacity: 0; }
+  }
+  .sp {
+    position: absolute; color: var(--accent); line-height: 1;
+    animation: twinkle ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); }
+    50% { opacity: .9; transform: scale(1) rotate(45deg); }
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  /* Üst bar */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; }
+  .brand img { width: 52px; height: 52px; aspect-ratio: 1 / 1; border-radius: 15px; object-fit: cover; object-position: center; box-shadow: var(--shadow); }
+  .brand .rgb { font-size: 22px; font-weight: 900; letter-spacing: .01em; }
+  .status {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.75); border: 1.5px solid var(--line);
+    font-size: 13px; font-weight: 800; color: var(--accent-2);
+    backdrop-filter: blur(6px);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,.6); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+
+  /* Hero */
+  .hero { padding: 48px 0 28px; }
+  h1 {
+    font-family: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+    font-size: clamp(34px, 7vw, 66px);
+    font-weight: 700;
+    line-height: 1.2;
+    min-height: 1.3em;
+  }
+  #typed {
+    color: var(--accent-2);
+    text-shadow: 0 0 24px rgba(236, 72, 153, .28);
+  }
+  .cursor {
+    display: inline-block; width: .06em; height: .8em; margin-left: .06em;
+    vertical-align: -.05em; background: var(--accent); border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* made by ato */
+  .credit {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 12px; font-size: 14px; font-weight: 700; color: var(--muted);
+  }
+  .rgb {
+    font-weight: 900;
+    background: linear-gradient(90deg, #ff0040, #ff9900, #ffee00, #00e676, #00b0ff, #7c4dff, #ff0040);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: rgb 4s linear infinite;
+  }
+  @keyframes rgb { to { background-position: 300% 0; } }
+  .tick { width: 16px; height: 16px; flex: none; }
+
+  /* Özellik hapları */
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: rgba(255,255,255,.8); border: 1.5px solid var(--line);
+    font-size: 14px; font-weight: 800; color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .chip svg { width: 16px; height: 16px; color: var(--accent); }
+
+  /* Bölüm başlığı + arama */
+  .bar {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 14px; margin: 38px 0 20px;
+  }
+  .bar h2 { font-size: 22px; font-weight: 900; display: flex; align-items: center; gap: 10px; }
+  .count {
+    font-size: 13px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .search { position: relative; width: 100%; max-width: 280px; }
+  .search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--accent); }
+  .search input {
+    width: 100%; padding: 11px 14px 11px 42px;
+    border-radius: 14px; border: 1.5px solid var(--line);
+    background: rgba(255,255,255,.9);
+    font: inherit; font-weight: 700; color: var(--text);
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .search input::placeholder { color: #cf8fb0; }
+  .search input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(236,72,153,.15); }
+
+  /* Kartlar: küçük, soldan başlar */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 150px);
+    justify-content: start;
+    gap: 18px;
+  }
+  .card {
+    position: relative; overflow: hidden;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 20px;
+    padding: 10px 10px 12px;
+    text-decoration: none; color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    display: block;
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: -80%;
+    width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.7), transparent);
+    transform: skewX(-20deg); transition: left .6s ease; pointer-events: none; z-index: 2;
+  }
+  .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(219,39,119,.25); }
+  .card:hover::before { left: 140%; }
+  .card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .thumb { position: relative; }
+  .card img {
+    width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+    border-radius: 14px; display: block; background: var(--bg-2);
+  }
+  .tag {
+    position: absolute; top: 7px; left: 7px;
+    font-size: 11px; font-weight: 900; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    padding: 2px 8px; border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(219,39,119,.4);
+  }
+  .card .name { margin: 10px 2px 2px; font-size: 17px; font-weight: 800; letter-spacing: .06em; }
+  .card .cat { margin: 0 2px 9px; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .card .play {
+    display: block; text-align: center; padding: 8px 0;
+    font-size: 14px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 12px;
+  }
+
+  .fx { font-family: "Space Grotesk", "Nunito", system-ui, sans-serif; letter-spacing: .02em; font-weight: 700; }
+
+  .empty { display: none; padding: 30px 0; color: var(--muted); font-weight: 700; }
+
+  footer {
+    margin-top: 56px; padding-top: 22px;
+    border-top: 1.5px dashed var(--line);
+    display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between;
+    font-size: 13px; font-weight: 700; color: var(--muted);
+  }
+  footer .credit { margin: 0; font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 0 16px 32px; }
+    .hero { padding-top: 30px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+    .search { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .dot, .cursor, .rgb, .aurora { animation: none; }
+    .p, .sp, .glow { display: none; }
+    .card, .card::before { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="aurora"></div>
+    <div class="glow" id="glow"></div>
+    <div id="fx"></div>
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  </div>
+
+  <div class="wrap">
+    <nav>
+      <div class="brand">
+        <img src="https://i.hizliresim.com/xlkw1tf8.jpg" alt="Logo">
+        <span class="rgb">unblocked games</span>
+      </div>
+      <div class="status fx"><span class="dot"></span>Online</div>
+    </nav>
+
+    <section class="hero">
+      <h1><span id="typed"></span><span class="cursor" aria-hidden="true"></span></h1>
+
+      <div class="credit">
+        made by <span class="rgb">ato</span>
+        <svg class="tick" viewBox="0 0 24 24" aria-label="Doğrulanmış hesap" role="img">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="#1d9bf0"/>
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/>
+          <path d="M8 12.4l2.7 2.7L16.2 9.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="chips">
+        <span class="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Engelsiz
+        </span>
+        <span class="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+          Tamamen ücretsiz
+        </span>
+        <span class="chip fx">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg>
+          HTML5
+        </span>
+      </div>
+    </section>
+
+    <section>
+      <div class="bar">
+        <h2>Tüm oyunlar <span class="count" id="count">0</span></h2>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          <input id="q" type="search" placeholder="Oyun ara..." autocomplete="off">
+        </label>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty">Aradığın oyun bulunamadı.</p>
+    </section>
+
+    <footer>
+      <span class="fx">Oyunlar bize ait değildir</span>
+      <span class="credit">made by <span class="rgb">ato</span>
+        <svg class="tick" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="#1d9bf0"/>
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="#1d9bf0" transform="rotate(45 12 12)"/>
+          <path d="M8 12.4l2.7 2.7L16.2 9.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </footer>
+  </div>
+
+<script>
+  // ---- Oyun kartları: yeni oyun eklemek için listeye bir satır ekle ----
+  const games = [
+    {
+      name: "紫电枪魂",
+      cat: "Silah oyunu",
+      tag: "Yeni",
+      icon: "https://i.hizliresim.com/4ww515zr.jpg",
+      url: "https://enbabaoyunlarburada.vercel.app/silahoyunu"
+    },
+    {
+      name: "ZİRVE",
+      cat: "Hayatta kalma",
+      tag: "Yeni",
+      icon: "https://i.hizliresim.com/dqwy4zjj.jpg",
+      url: "https://enbabaoyunlarburada.vercel.app/survival"
+    },
+    {
+      name: "BatuCraft",
+      cat: "Blok oyunu",
+      tag: "Yeni",
+      icon: "https://i.hizliresim.com/7z9oj8nv.jpg",
+      url: "https://enbabaoyunlarburada.vercel.app/minecraft"
+    },
+    {
+      name: "İnfinite Garden",
+      cat: "Beyin yakıcı",
+      tag: "Yeni",
+      icon: "https://i.hizliresim.com/s2t9hvnm.jpg",
+      url: "https://enbabaoyunlarburada.vercel.app/garipoyun"
+    },
+    {
+      name: "Jimao 3D",
+      cat: "FPS Shooter",
+      tag: "Yeni",
+      icon: "https://i.hizliresim.com/zwip1bgt.jpg",
+      url: "https://enbabaoyunlarburada.vercel.app/jimao3d"
+    }
+  ];
+
+  const grid = document.getElementById("grid");
+  const countEl = document.getElementById("count");
+  const emptyEl = document.getElementById("empty");
+
+  function render(filter = "") {
+    grid.innerHTML = "";
+    const f = filter.trim().toLocaleLowerCase("tr");
+    const list = games.filter(g => (g.name + " " + (g.cat || "")).toLocaleLowerCase("tr").includes(f));
+
+    list.forEach(g => {
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = g.url;
+
+      const thumb = document.createElement("div");
+      thumb.className = "thumb";
+      const img = document.createElement("img");
+      img.src = g.icon;
+      img.alt = g.name + " ikonu";
+      thumb.appendChild(img);
+      if (g.tag) {
+        const t = document.createElement("span");
+        t.className = "tag";
+        t.textContent = g.tag;
+        thumb.appendChild(t);
+      }
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = g.name;
+
+      const cat = document.createElement("div");
+      cat.className = "cat";
+      cat.textContent = g.cat || "";
+
+      const play = document.createElement("span");
+      play.className = "play";
+      play.textContent = "Oyna";
+
+      a.append(thumb, name, cat, play);
+      grid.appendChild(a);
+    });
+
+
+    countEl.textContent = games.length;
+    emptyEl.style.display = list.length ? "none" : "block";
+  }
+
+  render();
+  document.getElementById("q").addEventListener("input", e => render(e.target.value));
+
+
+  // ---- Arka plan efektleri: yükselen baloncuklar, parıltılar, fareyi izleyen ışık ----
+  (function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const box = document.getElementById("fx");
+    const r = (a, b) => a + Math.random() * (b - a);
+
+    for (let i = 0; i < 22; i++) {
+      const d = document.createElement("span");
+      d.className = "p";
+      const size = r(8, 30);
+      d.style.cssText = `left:${r(0, 100)}%;width:${size}px;height:${size}px;` +
+        `--sway:${r(-50, 50)}px;animation-duration:${r(12, 26)}s;animation-delay:${-r(0, 26)}s;`;
+      box.appendChild(d);
+    }
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement("span");
+      s.className = "sp";
+      s.textContent = "✦";
+      s.style.cssText = `left:${r(0, 100)}%;top:${r(0, 100)}%;font-size:${r(10, 22)}px;` +
+        `animation-duration:${r(3, 7)}s;animation-delay:${-r(0, 7)}s;`;
+      box.appendChild(s);
+    }
+
+    const glow = document.getElementById("glow");
+    window.addEventListener("pointermove", e => {
+      glow.style.left = e.clientX + "px";
+      glow.style.top = e.clientY + "px";
+    });
+  })();
+
+  // ---- Başlık: harf harf yazılır, sonra silme tuşuna basılmış gibi silinir ----
+  const phrases = [
+    "Bütün oyunlar engelsizdir",
+    "Tamamen ücretsiz",
+    "Yeni oyunlar yakında",
+    "Buraya ne yazmalıyım?",
+    "Denediğin için teşekkürler!",
+    "Bir oyunu denesene"
+  ];
+  const el = document.getElementById("typed");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduce) {
+    let i = 0;
+    el.textContent = phrases[0];
+    setInterval(() => { i = (i + 1) % phrases.length; el.textContent = phrases[i]; }, 3000);
+  } else {
+    let p = 0, c = 0, deleting = false;
+    function tick() {
+      const word = phrases[p];
+      if (!deleting) {
+        c++;
+        el.textContent = word.slice(0, c);
+        if (c === word.length) { deleting = true; return setTimeout(tick, 1600); }
+        setTimeout(tick, 70 + Math.random() * 50);
+      } else {
+        c--;
+        el.textContent = word.slice(0, c);
+        if (c === 0) { deleting = false; p = (p + 1) % phrases.length; return setTimeout(tick, 400); }
+        setTimeout(tick, 35);
+      }
+    }
+    tick();
+  }
+</script>
+</body>
+</html>
