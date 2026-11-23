@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rainbow Mixlab — A Joycrate Original</title>
+<meta name="description" content="Rainbow Mixlab — A Joycrate Original. Pour, mix and sort paint jars to fill every colour on the order.">
+<meta name="author" content="Joycrate">
+<meta name="application-name" content="Rainbow Mixlab">
+<meta property="og:title" content="Rainbow Mixlab — A Joycrate Original">
+<meta property="og:site_name" content="Joycrate">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Layout: paint-lab bench — order card + recipe strip on top, chunky flat jars in a wrapping grid, sticker-button tray. One committed light look: lilac dot-grid paper, thick ink outlines, hard offset shadows. */
+:root{
+  --paper:#FF9BD2;
+  --dot:rgba(255,255,255,.35);
+  --sun:#FFE45C;
+  --mint:#7DF2C0;
+  --sky:#7CD3FF;
+  --peach:#FFB46B;
+  --lilac:#C6A4FF;
+  --rose:#FF6FA8;
+  --ink:#2B1B54;
+  --ink-soft:#6B5A99;
+  --card:#FFFFFF;
+  --hi:#FFE45C;
+  --line:3px;
+  --f-display:'Lilita One','Nunito',system-ui,sans-serif;
+  --f-body:'Nunito',system-ui,sans-serif;
+  --w:clamp(46px,14.5vw,66px);
+  color-scheme:light;
+}
+html,body{height:100%}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;color:var(--ink);font-family:var(--f-body);background-color:var(--paper);
+  background-image:radial-gradient(var(--dot) 1.6px,transparent 1.8px),
+    radial-gradient(circle at 8% 4%,var(--sun) 0 90px,transparent 91px),
+    radial-gradient(circle at 104% 30%,var(--sky) 0 120px,transparent 121px),
+    radial-gradient(circle at -6% 62%,var(--mint) 0 110px,transparent 111px),
+    radial-gradient(circle at 96% 96%,var(--lilac) 0 140px,transparent 141px),
+    linear-gradient(160deg,#FF9BD2,#FFB0C8 45%,#FFA6E0);
+  background-size:20px 20px,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%;background-attachment:fixed;
+  -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;overflow-x:hidden}
+.app{min-height:100%;max-width:640px;margin:0 auto;padding-inline:16px;padding-block:14px 20px;display:flex;flex-direction:column;gap:14px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.logo{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(30px,8.4vw,42px);line-height:.9;letter-spacing:.01em;display:flex;align-items:baseline;gap:.18em}
+.logo .mix{color:var(--card);-webkit-text-stroke:2.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.logo .mix span{display:inline-block}
+.logo small{font-family:var(--f-body);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--sun);background:var(--ink);padding:4px 8px;border-radius:8px;transform:rotate(-4deg);align-self:center}
+.stats{display:flex;gap:8px}
+.chip{display:flex;flex-direction:column;align-items:center;padding:5px 12px;border:var(--line) solid var(--ink);border-radius:12px;background:var(--card);box-shadow:3px 3px 0 var(--ink);min-width:58px}
+.chip small{font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.chip:first-child{background:var(--lilac)}
+.chip:last-child{background:var(--mint)}
+.chip b{font-size:19px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+
+.panel{background:var(--sun);border:var(--line) solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--ink);padding-block:10px 12px;padding-inline:14px;display:flex;flex-direction:column;gap:8px}
+.panel h2{margin:0;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.orders{display:flex;flex-wrap:wrap;gap:6px}
+.order{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border:2.5px solid var(--ink);border-radius:99px;font-weight:900;font-size:13px;background:var(--card);transition:background .3s,transform .3s}
+.order i{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--ink);flex:none}
+.order.ok{background:var(--mint);transform:rotate(-2deg)}
+.order.ok::after{content:"✓";font-weight:900}
+.recipes{display:flex;flex-wrap:wrap;gap:6px 14px;background:var(--card);border:2.5px solid var(--ink);border-radius:12px;padding:8px 10px}
+.recipe{display:flex;align-items:center;gap:4px;font-weight:900;font-size:14px;color:var(--ink);transition:opacity .2s}
+.recipe i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink)}
+.recipe.off{opacity:.25}
+
+#bench{position:relative;flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:calc(var(--w)*.62) calc(var(--w)*.34);padding-block:calc(var(--w)*.7) calc(var(--w)*.45);padding-inline:10px;background-color:var(--sky);background-image:radial-gradient(rgba(255,255,255,.5) 1.6px,transparent 1.8px);background-size:18px 18px;border:var(--line) solid var(--ink);border-radius:24px;box-shadow:5px 5px 0 var(--ink)}
+.jwrap{width:var(--w);height:calc(var(--w)*1.95);position:relative;flex:none}
+.jwrap::after{content:"";position:absolute;left:4%;right:-6%;bottom:-7px;height:9px;border-radius:50%;background:rgba(43,27,84,.18)}
+.jwrap:nth-child(6n+1) .lip{background:var(--rose)}.jwrap:nth-child(6n+2) .lip{background:var(--peach)}.jwrap:nth-child(6n+3) .lip{background:var(--mint)}
+.jwrap:nth-child(6n+4) .lip{background:var(--lilac)}.jwrap:nth-child(6n+5) .lip{background:var(--sun)}.jwrap:nth-child(6n) .lip{background:#FF9BD2}
+.jar{all:unset;position:absolute;inset:0;cursor:pointer;transform-origin:50% 0;transition:transform .24s cubic-bezier(.3,1.5,.5,1)}
+.lip{position:absolute;left:-9%;right:-9%;top:0;height:calc(var(--w)*.2);border:var(--line) solid var(--ink);border-radius:8px;background:var(--card);z-index:2;transition:background .2s}
+.body{position:absolute;left:0;right:0;top:calc(var(--w)*.14);bottom:0;border:var(--line) solid var(--ink);border-radius:10px 10px calc(var(--w)*.34) calc(var(--w)*.34);background:var(--card);box-shadow:4px 4px 0 var(--ink);overflow:hidden}
+.liquid{position:absolute;left:0;right:0;top:calc(var(--w)*.1);bottom:0}
+.slot{position:absolute;left:0;right:0;height:25%;bottom:calc(var(--j)*25%)}
+.slot i{position:absolute;inset:-.5px 0;transform:scaleY(0);transform-origin:50% 100%;transition:transform .26s ease,background-color .5s ease;
+  background-image:linear-gradient(90deg,rgba(0,0,0,.08),transparent 22%,rgba(255,255,255,.42) 30%,rgba(255,255,255,.42) 38%,transparent 46%,transparent 80%,rgba(0,0,0,.1))}
+.slot i.on{transform:scaleY(1)}
+.slot.top i{border-top:2.5px solid rgba(43,27,84,.35)}
+.gloss{position:absolute;right:16%;top:16%;width:9%;height:30%;border-radius:99px;background:rgba(255,255,255,.75);z-index:1;pointer-events:none}
+.badge{position:absolute;left:50%;top:calc(var(--w)*-.42);width:calc(var(--w)*.5);height:calc(var(--w)*.5);transform:translateX(-50%) scale(0);border-radius:50%;background:var(--hi);border:2.5px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:calc(var(--w)*.26);z-index:3;transition:transform .35s cubic-bezier(.3,1.7,.5,1)}
+.made .badge{transform:translateX(-50%) scale(1)}
+.jar.sel{transform:translateY(-16px)}
+.jwrap .jar.sel .lip{background:var(--card)}
+.jar.sel .body{box-shadow:4px 4px 0 var(--ink),0 0 0 4px var(--card)}
+.jar:focus-visible{outline:3px dashed var(--ink);outline-offset:8px;border-radius:12px}
+.jar.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-5px) rotate(-3deg)}40%,80%{transform:translateX(5px) rotate(3deg)}}
+.jar.hint{animation:hint .45s ease-in-out 4 alternate}
+.jwrap .jar.hint .lip{background:var(--card)}
+@keyframes hint{to{transform:translateY(-12px)}}
+.stream{position:absolute;width:9px;border:2.5px solid var(--ink);border-top:none;border-radius:0 0 6px 6px;transform-origin:50% 0;transform:scaleY(0);transition:transform .14s ease-in;z-index:25;pointer-events:none}
+.stream.on{transform:scaleY(1)}
+.blob{position:absolute;border-radius:50%;border:2px solid var(--ink);pointer-events:none;z-index:40;animation:blob .75s ease-out forwards}
+@keyframes blob{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+
+.toast{text-align:center;min-height:20px;font-weight:900;font-size:14px;color:var(--ink)}
+.toast.warn{color:var(--card);background:var(--ink);border-radius:12px;padding:6px 10px}
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tb{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border:var(--line) solid var(--ink);border-radius:14px;background:var(--card);color:var(--ink);font:900 14px/1 var(--f-body);box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.tb:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.tb:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
+.tb[disabled]{opacity:.4;cursor:default}
+.tb svg{width:18px;height:18px}
+#undo{background:var(--rose)}#hint{background:var(--sun)}#restart{background:var(--mint)}#sound{background:var(--lilac)}
+.brand{align-self:center;margin:0;padding:4px 10px;border:2.5px solid var(--ink);border-radius:99px;background:var(--card);box-shadow:2px 2px 0 var(--ink);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.brand b{color:var(--ink);background:var(--sun);padding:1px 5px;border-radius:6px;margin-left:2px}
+.tb.primary{background:var(--sun)}
+
+.win{position:fixed;inset:0;display:grid;place-items:center;background:rgba(43,27,84,.45);z-index:60;padding-inline:16px}
+.card{background:var(--sun);border:var(--line) solid var(--ink);border-radius:24px;box-shadow:7px 7px 0 var(--ink);padding-block:24px 22px;padding-inline:24px;text-align:center;width:min(330px,100%);animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.6) rotate(-6deg);opacity:0}}
+.card h3{font-family:var(--f-display);font-weight:400;font-size:38px;margin:4px 0 4px}
+.card p{margin:0 0 18px;font-weight:800;color:var(--ink)}
+.arc{display:flex;justify-content:center;gap:4px}
+.arc i{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--ink);animation:hop .6s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes hop{from{transform:translateY(16px) scale(.3)}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){.jar,.slot i,.badge{transition:none}.arc i{animation:none}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1 class="logo" aria-label="Rainbow Mixlab"><span class="mix" id="logo"></span><small>Rainbow</small></h1>
+    <div class="stats">
+      <div class="chip"><small>Level</small><b id="lvl">1</b></div>
+      <div class="chip"><small>Pours</small><b id="mv">0</b></div>
+    </div>
+  </header>
+
+  <section class="panel" aria-label="Order and recipes">
+    <h2>Fill one jar of each</h2>
+    <div class="orders" id="orders"></div>
+    <h2>Recipes</h2>
+    <div class="recipes" id="recipes"></div>
+  </section>
+
+  <main id="bench" aria-label="Paint jars"></main>
+
+  <div class="toast" id="toast"></div>
+
+  <nav class="tools">
+    <button class="tb" id="undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Undo</button>
+    <button class="tb" id="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/></svg>Hint</button>
+    <button class="tb" id="restart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Restart</button>
+    <button class="tb" id="sound" aria-label="Toggle sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path id="wave" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></button>
+  </nav>
+  <p class="brand">A <b>Joycrate</b> Original</p>
+</div>
+
+<div class="win" id="win" hidden>
+  <div class="card">
+    <div class="arc" id="arc"></div>
+    <h3>Order up!</h3>
+    <p id="winmsg"></p>
+    <button class="tb" id="next" style="background:var(--rose)">Next order →</button>
+  </div>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+(() => {
+/* ---------- palette & recipes ---------- */
+const CAP = 4;
+const HEX  = ['#FF3B5C','#FF8A1F','#FFD60A','#2BD67B','#1E9BFF','#4F46E5','#B44CFF'];
+const NAME = ['Red','Orange','Yellow','Green','Blue','Indigo','Violet'];
+const R=0,O=1,Y=2,G=3,B=4,I=5,V=6;
+const RECIPES = [[R,Y,O],[Y,B,G],[R,B,V],[B,V,I]];
+const MIX = {}; RECIPES.forEach(([a,b,c]) => { MIX[a*10+b] = c; MIX[b*10+a] = c; });
+const LEVELS = [[R,O,Y],[Y,G,B],[R,V,B],[R,O,Y,G,B],[O,G,V,R,Y,B],[R,O,Y,G,B,I,V]];
+const levelT = l => LEVELS[Math.min(l, LEVELS.length) - 1];
+
+const $ = s => document.querySelector(s);
+const bench = $('#bench');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+let S, els = [], busy = false, muted = false, toastTimer;
+
+'Mixlab'.split('').forEach((ch, k) => { const s = document.createElement('span'); s.textContent = ch; s.style.transform = `rotate(${[-4,3,-2,4,-3,2][k]}deg)`; s.style.color = HEX[[0,2,4,6,3,1][k]]; $('#logo').appendChild(s); });
+RECIPES.forEach(([a,b,c], k) => {
+  const d = document.createElement('div'); d.className = 'recipe'; d.dataset.k = k;
+  d.innerHTML = `<i style="background:${HEX[a]}"></i>+<i style="background:${HEX[b]}"></i>=<i style="background:${HEX[c]}"></i>`;
+  d.title = `${NAME[a]} + ${NAME[b]} = ${NAME[c]}`;
+  $('#recipes').appendChild(d);
+});
+
+/* ---------- rules ---------- */
+const top = t => t[t.length - 1];
+const runLen = t => { let n = 0; for (let i = t.length - 1; i >= 0 && t[i] === top(t); i--) n++; return n; };
+const uniformFull = t => t.length === CAP && t.every(c => c === t[0]);
+function canPour(ts, a, b) {
+  if (a === b || !ts[a].length || ts[b].length >= CAP) return false;
+  if (!ts[b].length) return true;
+  const x = top(ts[a]), y = top(ts[b]);
+  return x === y || MIX[x*10+y] !== undefined;
+}
+function doPour(ts, a, b) {
+  const n = Math.min(runLen(ts[a]), CAP - ts[b].length), x = top(ts[a]);
+  const before = ts[b].slice();
+  for (let i = 0; i < n; i++) ts[a].pop();
+  if (ts[b].length && top(ts[b]) !== x) {
+    const c = MIX[x*10+top(ts[b])], m = runLen(ts[b]);
+    for (let i = 0; i < m; i++) ts[b].pop();
+    for (let i = 0; i < m + n; i++) ts[b].push(c);
+    return { a, b, n, x, before, mixed: c };
+  }
+  for (let i = 0; i < n; i++) ts[b].push(x);
+  return { a, b, n, x, before };
+}
+function undoPour(ts, r) { ts[r.b] = r.before.slice(); for (let i = 0; i < r.n; i++) ts[r.a].push(r.x); }
+const counts = ts => { const c = [0,0,0,0,0,0,0]; for (const t of ts) for (const x of t) c[x]++; return c; };
+const needOf = T => { const n = [0,0,0,0,0,0,0]; for (const c of T) n[c] += CAP; return n; };
+function deadReason(ts, need) {
+  const c = counts(ts);
+  for (const p of [O,G,I]) if (c[p] > need[p]) return `Too much ${NAME[p].toLowerCase()}. It can't be mixed back. Undo to fix it.`;
+  if (c[V] > need[V] + need[I]) return 'Too much violet now. Undo to fix it.';
+  for (const p of [R,Y,B]) if (c[p] < need[p]) return `Not enough ${NAME[p].toLowerCase()} left for the order. Undo to fix it.`;
+  return '';
+}
+function solved(ts, need) {
+  if (!ts.every(t => !t.length || uniformFull(t))) return false;
+  return counts(ts).every((v, i) => v === need[i]);
+}
+
+/* ---------- solver ---------- */
+function solve(start, T, limit = 200000) {
+  const need = needOf(T), ts = start.map(t => t.slice()), seen = new Set(), path = []; let nodes = 0;
+  const key = () => ts.map(t => t.join('')).sort().join('|');
+  function dfs() {
+    if (solved(ts, need)) return true;
+    if (++nodes > limit) return false;
+    if (deadReason(ts, need)) return false;
+    const k = key(); if (seen.has(k)) return false; seen.add(k);
+    const moves = [];
+    for (let a = 0; a < ts.length; a++) {
+      if (!ts[a].length) continue;
+      const unif = ts[a].every(c => c === ts[a][0]);
+      let triedEmpty = false;
+      for (let b = 0; b < ts.length; b++) {
+        if (!canPour(ts, a, b)) continue;
+        if (!ts[b].length) { if (unif || triedEmpty) continue; triedEmpty = true; moves.push([a, b, 0]); continue; }
+        const whole = Math.min(runLen(ts[a]), CAP - ts[b].length) === runLen(ts[a]);
+        moves.push([a, b, (top(ts[a]) === top(ts[b]) ? 3 : 2) + (whole ? 1 : 0)]);
+      }
+    }
+    moves.sort((p, q) => q[2] - p[2]);
+    for (const [a, b] of moves) { const r = doPour(ts, a, b); path.push([a, b]); if (dfs()) return true; path.pop(); undoPour(ts, r); }
+    return false;
+  }
+  return dfs() ? path : (nodes > limit ? undefined : null);
+}
+
+/* ---------- levels ---------- */
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+function compose(c) {
+  if (c === R || c === Y || c === B) return Array(4).fill(c);
+  const split = (p, q, a) => [...Array(a).fill(p), ...Array(4 - a).fill(q)];
+  if (c === O) return split(R, Y, ri(1, 3));
+  if (c === G) return split(Y, B, ri(1, 3));
+  if (c === V) return split(R, B, ri(1, 3));
+  return split(R, B, ri(1, 2)); // indigo = blue + violet(red+blue)
+}
+function genLevel(level) {
+  const T = levelT(level); let fb;
+  for (let tries = 0; tries < 80; tries++) {
+    const pool = T.flatMap(compose);
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    const ts = []; for (let i = 0; i < T.length; i++) ts.push(pool.slice(i * 4, i * 4 + 4)); ts.push([], []);
+    if (ts.some(t => t.length && runLen(t) >= 3)) continue;
+    fb = ts;
+    if (solve(ts, T, 60000)) return ts;
+  }
+  return fb;
+}
+function newLevel(level) {
+  const T = levelT(level).slice();
+  const tubes = genLevel(level);
+  S = { level, T, tubes, init: tubes.map(t => t.slice()), history: [], moves: 0, sel: -1 };
+  store.set('mixlab-level', String(level));
+  build(); updateHud();
+  if (level === 1) say('Tap a jar, then another. Red poured onto yellow turns orange.');
+  else say(`New order: ${T.map(c => NAME[c].toLowerCase()).join(', ')}`, 3500);
+}
+
+/* ---------- DOM ---------- */
+function build() {
+  bench.innerHTML = ''; els = [];
+  $('#orders').innerHTML = '';
+  [...S.T].sort((a, b) => a - b).forEach(c => {
+    const o = document.createElement('div'); o.className = 'order'; o.dataset.c = c;
+    o.innerHTML = `<i style="background:${HEX[c]}"></i>${NAME[c]}`;
+    $('#orders').appendChild(o);
+  });
+  const used = new Set(S.T);
+  document.querySelectorAll('.recipe').forEach(d => d.classList.toggle('off', !used.has(RECIPES[d.dataset.k][2])));
+  S.tubes.forEach((_, i) => {
+    const w = document.createElement('div'); w.className = 'jwrap';
+    const j = document.createElement('button'); j.className = 'jar'; j.setAttribute('aria-label', `Jar ${i + 1}`);
+    let slots = ''; for (let k = 0; k < CAP; k++) slots += `<div class="slot" style="--j:${k}"><i></i></div>`;
+    j.innerHTML = `<div class="body"><div class="liquid">${slots}</div><div class="gloss"></div></div><div class="lip"></div><div class="badge">★</div>`;
+    j.addEventListener('click', () => tap(i));
+    w.appendChild(j); bench.appendChild(w); els[i] = j;
+    paint(i, S.tubes[i], 0, false);
+  });
+}
+function paint(i, t, oldLen, animate = true) {
+  const j = els[i];
+  j.querySelectorAll('.slot').forEach((slot, k) => {
+    const f = slot.firstChild;
+    if (!animate) f.style.transition = 'none';
+    if (k < t.length) {
+      f.style.backgroundColor = HEX[t[k]];
+      f.style.transitionDelay = animate && k >= oldLen ? `${(k - oldLen) * 110 + 60}ms, 0ms` : '0ms';
+      f.classList.add('on');
+    } else {
+      f.style.transitionDelay = animate && k < oldLen ? `${(oldLen - 1 - k) * 110}ms` : '0ms';
+      f.classList.remove('on');
+    }
+    slot.classList.toggle('top', k === t.length - 1);
+    if (!animate) { f.offsetHeight; f.style.transition = ''; }
+  });
+  j.classList.toggle('made', uniformFull(t) && S.T.includes(t[0]));
+}
+function updateHud() {
+  $('#lvl').textContent = S.level;
+  $('#mv').textContent = S.moves;
+  $('#undo').disabled = !S.history.length;
+  const have = [0,0,0,0,0,0,0]; S.tubes.forEach(t => { if (uniformFull(t)) have[t[0]]++; });
+  const want = [0,0,0,0,0,0,0]; S.T.forEach(c => want[c]++);
+  document.querySelectorAll('.order').forEach(o => { const c = +o.dataset.c; o.classList.toggle('ok', have[c] >= want[c]); });
+}
+function say(msg, ms, warn = false) {
+  clearTimeout(toastTimer); const t = $('#toast'); t.textContent = msg; t.classList.toggle('warn', warn);
+  if (ms) toastTimer = setTimeout(() => { t.textContent = ''; t.classList.remove('warn'); }, ms);
+}
+function select(i) {
+  if (S.sel >= 0) els[S.sel]?.classList.remove('sel');
+  S.sel = i; if (i >= 0) els[i].classList.add('sel');
+}
+
+/* ---------- play ---------- */
+function tap(i) {
+  if (busy) return;
+  initAudio();
+  const ts = S.tubes;
+  if (S.sel < 0) { if (!ts[i].length) { shake(i); return; } select(i); blip(520); return; }
+  if (S.sel === i) { select(-1); return; }
+  const a = S.sel;
+  if (canPour(ts, a, i)) { select(-1); pour(a, i); }
+  else if (ts[i].length && ts[i].length < CAP && top(ts[a]) !== top(ts[i])) {
+    shake(i); say(`${NAME[top(ts[a])]} and ${NAME[top(ts[i])].toLowerCase()} don't mix`, 2200, true);
+  }
+  else if (ts[i].length) { select(i); blip(520); }
+  else shake(i);
+}
+function shake(i) { const j = els[i]; j.classList.remove('shake'); j.offsetWidth; j.classList.add('shake'); setTimeout(() => j.classList.remove('shake'), 400); blip(170, 'square', .03); }
+
+async function pour(a, b) {
+  busy = true;
+  const ts = S.tubes, src = els[a], dst = els[b];
+  const oldA = ts[a].length, oldB = ts[b].length, x = top(ts[a]);
+  const rec = doPour(ts, a, b);
+  S.history.push(rec); S.moves++;
+  let stream;
+  if (!reduce) {
+    const br = bench.getBoundingClientRect(), sr = src.parentElement.getBoundingClientRect(), dr = dst.parentElement.getBoundingClientRect();
+    const dir = dr.left >= sr.left ? 1 : -1, w = sr.width;
+    const mx = dr.left + dr.width / 2 - dir * w * .08, my = dr.top - w * .55;
+    src.parentElement.style.zIndex = 30;
+    src.style.transition = 'transform .34s cubic-bezier(.45,0,.3,1)';
+    src.style.transform = `translate(${mx - (sr.left + sr.width / 2)}px,${my - sr.top}px) rotate(${dir * 100}deg)`;
+    await wait(330);
+    const lq = dst.querySelector('.liquid').getBoundingClientRect();
+    const surface = lq.bottom - (oldB / CAP) * lq.height;
+    stream = document.createElement('div'); stream.className = 'stream';
+    stream.style.background = HEX[x];
+    stream.style.left = (mx - br.left - 4.5) + 'px'; stream.style.top = (my - br.top) + 'px';
+    stream.style.height = Math.max(10, surface - my) + 'px';
+    bench.appendChild(stream); stream.offsetHeight; stream.classList.add('on');
+  }
+  paint(a, ts[a], oldA);
+  if (rec.mixed !== undefined) {
+    const pre = rec.before.concat(Array(rec.n).fill(x));
+    paint(b, pre, oldB);
+    glug(rec.n);
+    await wait(110 * rec.n + 320);
+    paint(b, ts[b], ts[b].length);
+    blobs(b, rec.mixed); bloop();
+  } else { paint(b, ts[b], oldB); glug(rec.n); }
+  updateHud();
+  if (!reduce) {
+    await wait(rec.mixed !== undefined ? 120 : 110 * rec.n + 300);
+    stream.style.transformOrigin = '50% 100%'; stream.classList.remove('on');
+    await wait(140); stream.remove();
+    src.style.transform = '';
+    await wait(320); src.parentElement.style.zIndex = ''; src.style.transition = '';
+  } else await wait(150);
+  if (uniformFull(ts[b]) && S.T.includes(ts[b][0])) chime();
+  busy = false;
+  const need = needOf(S.T);
+  if (solved(ts, need)) { win(); return; }
+  const why = deadReason(ts, need);
+  if (why) say(why, 0, true); else if ($('#toast').classList.contains('warn')) say('', 1);
+}
+
+function undo() {
+  if (busy || !S.history.length) return;
+  select(-1);
+  const r = S.history.pop(), oldA = S.tubes[r.a].length;
+  undoPour(S.tubes, r); S.moves++;
+  paint(r.a, S.tubes[r.a], oldA); paint(r.b, S.tubes[r.b], 0, false);
+  updateHud(); blip(340);
+  const why = deadReason(S.tubes, needOf(S.T)); if (why) say(why, 0, true); else say('', 1);
+}
+function hint() {
+  if (busy) return;
+  select(-1); say('Thinking…');
+  setTimeout(() => {
+    const p = solve(S.tubes, S.T, 200000);
+    if (p && p.length) {
+      const [a, b] = p[0];
+      [a, b].forEach(i => { els[i].classList.remove('hint'); els[i].offsetWidth; els[i].classList.add('hint'); });
+      setTimeout(() => [a, b].forEach(i => els[i]?.classList.remove('hint')), 2000);
+      say('Pour the first bouncing jar into the second', 2600);
+    } else if (p === null) say('This order can’t be finished from here. Undo a few pours.', 3400, true);
+    else say('Too tangled to see a hint. Try a couple of pours first.', 3000);
+  }, 30);
+}
+function restart() {
+  if (busy) return;
+  S.tubes = S.init.map(t => t.slice()); S.history = []; S.moves = 0; S.sel = -1;
+  build(); updateHud(); say('Fresh jars', 1500);
+}
+function win() {
+  $('#arc').innerHTML = [...S.T].sort((a, b) => a - b).map((c, k) => `<i style="background:${HEX[c]};animation-delay:${k * 70}ms"></i>`).join('');
+  $('#winmsg').textContent = `Order ${S.level} mixed in ${S.moves} pours`;
+  setTimeout(() => { $('#win').hidden = false; $('#next').focus(); }, 380);
+  confetti(); fanfare();
+}
+
+/* ---------- effects ---------- */
+function blobs(i, c) {
+  if (reduce) return;
+  const br = bench.getBoundingClientRect(), r = els[i].getBoundingClientRect();
+  const cx = r.left + r.width / 2 - br.left, cy = r.top - br.top + r.height * .25;
+  for (let k = 0; k < 10; k++) {
+    const s = document.createElement('i'); s.className = 'blob';
+    const sz = 7 + Math.random() * 9, ang = -Math.PI / 2 + (Math.random() - .5) * 2.4, d = 24 + Math.random() * 30;
+    Object.assign(s.style, { width: sz + 'px', height: sz + 'px', left: cx - sz / 2 + 'px', top: cy + 'px', background: HEX[c] });
+    s.style.setProperty('--dx', Math.cos(ang) * d + 'px'); s.style.setProperty('--dy', Math.sin(ang) * d + 'px');
+    bench.appendChild(s); setTimeout(() => s.remove(), 800);
+  }
+}
+const cv = $('#fx'), cx = cv.getContext('2d');
+function confetti() {
+  if (reduce) return;
+  const dpr = devicePixelRatio || 1;
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const ps = Array.from({ length: 150 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 80, y: innerHeight * .45,
+    vx: (Math.random() - .5) * 15, vy: -Math.random() * 15 - 5, s: 7 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - .5) * .3,
+    c: HEX[Math.random() * 7 | 0], round: Math.random() < .5 }));
+  const t0 = performance.now();
+  (function frame(t) {
+    cx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of ps) {
+      p.vy += .38; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.strokeStyle = '#2B1B54'; cx.lineWidth = 2;
+      cx.beginPath(); if (p.round) cx.arc(0, 0, p.s / 2, 0, 7); else cx.rect(-p.s / 2, -p.s / 3, p.s, p.s * .66);
+      cx.fill(); cx.stroke(); cx.restore();
+    }
+    if (t - t0 < 3200) requestAnimationFrame(frame); else cx.clearRect(0, 0, innerWidth, innerHeight);
+  })(t0);
+}
+
+/* ---------- sound ---------- */
+let ac;
+function initAudio() { if (!ac && !muted) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (ac && ac.state === 'suspended') ac.resume(); }
+function tone(f, d = .1, type = 'sine', vol = .06, when = 0, to = 1.25) {
+  if (muted || !ac) return;
+  const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * to, t + d);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d + .02);
+}
+const blip = (f, type, vol) => tone(f, .08, type || 'sine', vol || .05);
+function glug(n) { for (let k = 0; k < n * 3; k++) tone(260 + k * 45 + Math.random() * 30, .07, 'sine', .05, k * .06); }
+function bloop() { tone(900, .28, 'sine', .07, 0, .35); tone(1400, .18, 'triangle', .03, .08, 1.6); }
+function chime() { [1047, 1319, 1568].forEach((f, k) => tone(f, .25, 'triangle', .05, k * .07)); }
+function fanfare() { [523, 659, 784, 1047, 1319].forEach((f, k) => tone(f, .3, 'triangle', .06, k * .1)); }
+$('#sound').addEventListener('click', () => { muted = !muted; $('#wave').style.opacity = muted ? .15 : 1; if (!muted) { initAudio(); blip(660); } });
+
+/* ---------- wire ---------- */
+$('#undo').addEventListener('click', undo);
+$('#hint').addEventListener('click', hint);
+$('#restart').addEventListener('click', restart);
+$('#next').addEventListener('click', () => { $('#win').hidden = true; newLevel(S.level + 1); });
+
+function start(data) {
+  if (data && data.S && Array.isArray(data.S.T)) {
+    S = data.S; S.sel = -1; build(); updateHud();
+    if (solved(S.tubes, needOf(S.T))) $('#win').hidden = false;
+  } else {
+    const saved = parseInt(store.get('mixlab-level'), 10);
+    newLevel(saved > 0 ? saved : 1);
+  }
+}
+start();
+})();
+</script>
+
+</body>
+</html>
