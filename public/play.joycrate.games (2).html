@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Reflex Dot</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1a1a2e; overflow: hidden;
+    font-family: system-ui, sans-serif; touch-action: manipulation; }
+  #hud { position: fixed; top: 10px; left: 0; right: 0; text-align: center;
+    color: #fff; font-size: 20px; font-weight: 700; pointer-events: none; }
+  #dot { position: absolute; width: 64px; height: 64px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffd31d, #e2a80a);
+    border: 3px solid #fff; cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: center; }
+  #msg { position: fixed; inset: 0; display: flex; flex-direction: column; gap: 12px;
+    align-items: center; justify-content: center; color: #fff; text-align: center; }
+  button { font-size: 18px; padding: 10px 24px; border-radius: 8px; border: 0;
+    background: #ffd31d; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="hud"></div>
+<div id="msg">
+  <h1>Reflex Dot</h1>
+  <p>Tap the dot as fast as you can.<br>You have 30 seconds!</p>
+  <button id="start">Start</button>
+</div>
+<div id="dot" style="display:none"></div>
+<script>
+  var score = 0, time = 30, timer = null;
+  var hud = document.getElementById('hud');
+  var dot = document.getElementById('dot');
+  var msg = document.getElementById('msg');
+  var best = Number(localStorage.getItem('reflex-best') || 0);
+
+  function move() {
+    var x = Math.random() * (innerWidth - 80) + 8;
+    var y = Math.random() * (innerHeight - 120) + 48;
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+  }
+
+  function tick() {
+    time--;
+    hud.textContent = 'Score ' + score + '   Time ' + time + 's   Best ' + best;
+    if (time <= 0) end();
+  }
+
+  function end() {
+    clearInterval(timer);
+    dot.style.display = 'none';
+    if (score > best) { best = score; localStorage.setItem('reflex-best', best); }
+    msg.innerHTML = '<h1>Time!</h1><p>You scored ' + score +
+      '.<br>Best: ' + best + '</p><button id="start">Play again</button>';
+    msg.style.display = 'flex';
+    document.getElementById('start').onclick = start;
+  }
+
+  function start() {
+    score = 0; time = 30;
+    msg.style.display = 'none';
+    dot.style.display = 'flex';
+    move();
+    hud.textContent = 'Score 0   Time 30s   Best ' + best;
+    clearInterval(timer);
+    timer = setInterval(tick, 1000);
+  }
+
+  dot.addEventListener('pointerdown', function () { score++; move(); });
+  document.getElementById('start').onclick = start;
+</script>
+</body>
+</html>
